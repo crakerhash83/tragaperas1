@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Majestic Casino Slots</title>
+  <style>
+    /* Estilo del casino */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(45deg, #1d2671, #c33764);
+      color: white;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .casino-container {
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      padding: 20px;
+      width: 90%;
+      max-width: 500px;
+    }
+    .logo {
+      width: 150px;
+      margin: 0 auto 10px;
+      display: block;
+    }
+    .casino-title {
+      font-size: 2rem;
+      margin-top: 10px;
+      color: #f1c40f;
+      text-shadow: 2px 2px 5px #000;
+    }
+    .saldo {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #2ecc71;
+    }
+    .slot-machine {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+    .slot {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      font-size: 2.5rem;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #f1c40f;
+      color: black;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px rgba(0, 0, 0, 0.2);
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #d4ac0d;
+    }
+    .paypal-container {
+      margin-top: 20px;
+    }
+    .resultado {
+      font-size: 1.2rem;
+      margin-top: 15px;
+    }
+    .register {
+      margin-top: 20px;
+      color: white;
+      font-size: 1rem;
+    }
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      font-size: 1rem;
+    }
+    .register button {
+      background: #3498db;
+      color: white;
+    }
+    .register button:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="casino-container">
+    <header>
+      <img src="majestic-logo.png" alt="Majestic Casino" class="logo">
+      <h1 class="casino-title">¡Majestic Casino Slots!</h1>
+    </header>
+
+    <!-- Registro de usuarios -->
+    <div class="register">
+      <h2>Registro</h2>
+      <input type="text" id="username" placeholder="Nombre de usuario">
+      <input type="password" id="password" placeholder="Contraseña">
+      <button onclick="registerUser()">Registrarse</button>
+      <p id="registerMessage"></p>
+    </div>
+
+    <div id="saldo" class="saldo">Saldo: $100</div>
+
+    <div class="slot-machine">
+      <div id="slot1" class="slot">🍒</div>
+      <div id="slot2" class="slot">🍋</div>
+      <div id="slot3" class="slot">🍉</div>
+    </div>
+
+    <div class="buttons">
+      <button id="spinningBtn">Jugar ($10)</button>
+    </div>
+
+    <div id="resultado" class="resultado"></div>
+
+    <!-- Contenedor del botón de PayPal -->
+    <div id="paypal-button-container" class="paypal-container"></div>
+  </div>
+
+  <!-- SDK de PayPal -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
+  <script>
+    let saldo = 100; // Saldo inicial del usuario
+
+    // Función para actualizar el saldo mostrado
+    const updateSaldoDisplay = () => {
+      document.getElementById("saldo").textContent = `Saldo: $${saldo}`;
+    };
+
+    // Función para jugar
+    const button = document.getElementById("spinningBtn");
+    const slot1 = document.getElementById("slot1");
+    const slot2 = document.getElementById("slot2");
+    const slot3 = document.getElementById("slot3");
+    const resultado = document.getElementById("resultado");
+
+    const symbols = ["🍒", "🍋", "🍊", "🍉", "🍇"];
+
+    button.addEventListener("click", () => {
+      if (saldo < 10) {
+        resultado.textContent = "No tienes suficiente saldo para jugar.";
+        return;
+      }
+
+      // Reducir saldo por jugar
+      saldo -= 10;
+      updateSaldoDisplay();
+
+      // Generar símbolos aleatorios
+      const randomSymbol1 = symbols[Math.floor(Math.random() * symbols.length)];
+      const randomSymbol2 = symbols[Math.floor(Math.random() * symbols.length)];
+      const randomSymbol3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+      // Asignar los símbolos a los slots
+      slot1.textContent = randomSymbol1;
+      slot2.textContent = randomSymbol2;
+      slot3.textContent = randomSymbol3;
+
+      // Comprobar si hay un premio
+      if (randomSymbol1 === randomSymbol2 && randomSymbol2 === randomSymbol3) {
+        const premio = 50; // Premio por ganar
+        saldo += premio;
+        resultado.textContent = `¡Ganaste $${premio}!`;
+      } else {
+        resultado.textContent = "Intenta de nuevo.";
+      }
+
+      updateSaldoDisplay();
+    });
+
+    // Renderizar el botón de PayPal
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        // Crear una orden en PayPal
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: '10.00' // Cantidad a pagar
+            }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        // Manejar el pago aprobado
+        return actions.order.capture().then(function(details) {
+          // Incrementar el saldo del usuario
+          saldo += 10;
+          updateSaldoDisplay();
+
+          // Mostrar mensaje de éxito
+          resultado.textContent = `Gracias, ${details.payer.name.given_name}! Has añadido $10 a tu saldo.`;
+        });
+      },
+      onError: function(err) {
+        console.error(err);
+        resultado.textContent = "Ocurrió un error con el pago. Inténtalo de nuevo.";
+      }
+    }).render('#paypal-button-container'); // Renderizar el botón en el contenedor
+
+    // Registro de usuarios
+    const registerUser = () => {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        document.getElementById("registerMessage").textContent = "Por favor, llena todos los campos.";
+        return;
+      }
+
+      document.getElementById("registerMessage").textContent = `Usuario registrado: ${username}`;
+    };
+  </script>
+</body>
+</html>
+
